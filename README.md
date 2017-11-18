@@ -20,6 +20,20 @@ Requirements (app/requirements.txt):
 
 ### OverView
 
+Variables:
+* vCenter
+  * host = <vcenter_fqdn>
+  * user = <user>@<domain>
+  * pwd = <password>
+  * port = <port> (usually 443)
+* Ansible AWX
+  * host = <ansible_fqdn>
+  * user = <user>
+  * password = <password>
+  * survey_spec_id = <integer>
+* Postgres
+  * TBD
+
 Main Function:
 ```python
 def main():
