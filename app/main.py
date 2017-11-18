@@ -33,7 +33,7 @@ def update_ansible_survey(survey, spec):
         x = x + 1
     print json.dumps(survey)
             
-            
+# Unused
 def GetVMHosts(content):
     host_view = content.viewManager.CreateContainerView(content.rootFolder,
                                                         [vim.HostSystem],
