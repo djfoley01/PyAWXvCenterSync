@@ -5,7 +5,7 @@ Example code, currently missing postgres connection and query to update final su
 The current output can be directly used to update the specific Ansible AWX postgres database.
 The only task now is to simply create a function to update the postgres database.
 
-## Setup
+### Setup
 
 Pre-Reqs:
 ```python
@@ -18,7 +18,7 @@ Requirements (app/requirements.txt):
 * pyVim==0.0.21
 * pyVmomi==6.5.0.2017.5-1
 
-## OverView
+### OverView
 
 Main Function:
 ```python
@@ -45,7 +45,7 @@ UPDATE main_jobtemplate
 SET survey_spec = '{"description": "", "name": "", "spec": [{"question_description": "", "min": 0, "default": "ashvc01.ash.com", "max": 1024, "required": true, "choices": "", "new_question": true, "variable": "vcenter_server", "question_name": "Vcenter server:", "type": "text"}, {"question_description": "", "min": 0, "default": "svcawx@ash.com", "max": 1024, "required": true, "choices": "", "new_question": true, "variable": "vcenter_user", "question_name": "Vcenter user:", "type": "text"}, {"question_description": "", "min": 0, "default": "$encrypted$", "max": 32, "required": true, "choices": "", "new_question": true, "variable": "vcenter_password", "question_name": "Vcenter password:", "type": "password"}, {"question_description": "", "min": null, "default": "type1", "max": null, "required": true, "choices": "ABC-PROD-VLAN123\nDEF-DEV-VLAN1234\ndvPortGroup\ndvPortGroup2\ndvSwitch-DVUplinks-381\ndvSwitch2-DVUplinks-384", "new_question": true, "variable": "client_type", "question_name": "Type", "type": "multiplechoice"}]}'
 WHERE unifiedjobtemplate_ptr_id = '7'
 ```
-## Features
+### Features
 
 Feature list:
 
