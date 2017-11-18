@@ -22,15 +22,15 @@ Requirements (app/requirements.txt):
 
 Variables:
 * vCenter
-  * host = <vcenter_fqdn>
-  * user = <user>@<domain>
-  * pwd = <password>
-  * port = <port> (usually 443)
+  * host = vcenter_fqdn
+  * user = user@domain
+  * pwd = password
+  * port = port (usually 443)
 * Ansible AWX
-  * host = <ansible_fqdn>
-  * user = <user>
-  * password = <password>
-  * survey_spec_id = <integer>
+  * host = ansible_fqdn
+  * user = user
+  * password = password
+  * survey_spec_id = integer
 * Postgres
   * TBD
 
