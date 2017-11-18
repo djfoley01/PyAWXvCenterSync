@@ -86,7 +86,7 @@ def get_obj(content, vimtype, name):
     return lobject
 
 def main():
-    serviceInstance = SmartConnectNoSSL(host="ashvc01.ash.com",user="svcawx@ash.com",pwd="Svc@wx1",port=443)
+    serviceInstance = SmartConnectNoSSL(host="ashvc01.ash.com",user="svcawx@ash.com",pwd="######",port=443)
     atexit.register(Disconnect, serviceInstance)
     content = serviceInstance.RetrieveContent()
     vds_ports = get_portgroups(content)
