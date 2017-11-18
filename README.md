@@ -26,6 +26,7 @@ Variables:
   * user = user@domain
   * pwd = password
   * port = port (usually 443)
+  * trunk_dvswitch_name = dvSwitch (may not be in the future)
 * Ansible AWX
   * host = ansible_fqdn
   * user = user
