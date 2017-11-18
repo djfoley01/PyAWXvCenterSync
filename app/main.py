@@ -91,7 +91,7 @@ def main():
     content = serviceInstance.RetrieveContent()
     vds_ports = get_portgroups(content)
     vds_ports_org = '\n'.join([str(x) for x in vds_ports]) 
-    vds_ports_json = json.dumps(vds_ports_org)
+    #vds_ports_json = json.dumps(vds_ports_org)
     ans_survey = get_ansible_survey("7")
     update_ansible_survey(ans_survey, vds_ports_org)
     return
