@@ -6,6 +6,7 @@ from pyVim.connect import Disconnect, SmartConnectNoSSL
 from pyVmomi import vim
 import atexit
 
+# Query Ansible AWX to obtain the survey_spec
 def get_ansible_survey(survey_id):
     headers = { 'Authorization' : 'Basic %s' % base64.b64encode("admin:password") }
     response = cStringIO.StringIO()
@@ -24,6 +25,7 @@ def get_ansible_survey(survey_id):
         resp = json.loads(response.getvalue())
         return resp
 
+# Needs to be updated to execute postgres query using the updated survey
 def update_ansible_survey(survey, spec):
     x = 0
     for value in survey["spec"]:
@@ -61,6 +63,7 @@ def get_vds_object(dc):
             vds.append(net.name)
     return vds
 
+# Get the virtual portgroups from vcenter
 def get_portgroups(content):
     trunk_dvswitch_name = "dvSwitch"
     #dvswitch_obj = get_obj(content,
@@ -72,6 +75,7 @@ def get_portgroups(content):
     port_groups = dvsportgroups
     return port_groups
 
+# Find and gather objects from vCenter, executed by get_portgroups
 def get_obj(content, vimtype, name):
     """Get the vsphere object associated with a given text name."""
     #obj = None
@@ -85,6 +89,7 @@ def get_obj(content, vimtype, name):
         #   lobject.append(temp)
     return lobject
 
+# Main Function
 def main():
     serviceInstance = SmartConnectNoSSL(host="ashvc01.ash.com",user="svcawx@ash.com",pwd="######",port=443)
     atexit.register(Disconnect, serviceInstance)
