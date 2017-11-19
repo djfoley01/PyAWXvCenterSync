@@ -6,6 +6,7 @@ from pyVim.connect import Disconnect, SmartConnectNoSSL
 from pyVmomi import vim
 import atexit
 import psycopg2
+import re
 
 # Query Ansible AWX to obtain the survey_spec
 def get_ansible_survey(survey_id):
@@ -124,7 +125,10 @@ def main():
     
     # Get a list of all the portgroups
     vds_ports = get_portgroups(content)
-    vds_ports_org = '\n'.join([str(x) for x in vds_ports]) 
+    # Use regex filter to remove anything that starts with two lowercase letters
+    regex = re.compile('[^a-z]{2,}')
+    filtered_ports = [i for i in vds_ports if regex.match(i)]
+    vds_ports_org = '\n'.join([str(x) for x in filtered_ports]) 
  
     # Get the ansible survey based on the survey_id 
     ans_survey = get_ansible_survey(survey_id)
