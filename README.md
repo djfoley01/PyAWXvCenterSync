@@ -33,19 +33,28 @@ Variables:
   * password = password
   * survey_spec_id = integer
 * Postgres
-  * TBD
+  * hostname = pgsql_fqdn
+  * user = db_user
+  * password db_password
+  * database = db
 
 Main Function:
 ```python
 def main():
+    # Initiate Connection to vCenter
     serviceInstance = SmartConnectNoSSL(host="ashvc01.ash.com",user="svcawx@ash.com",pwd="Svc@wx1",port=443)
     atexit.register(Disconnect, serviceInstance)
     content = serviceInstance.RetrieveContent()
     survey_id = "7"
+    
+    # Get a list of all the portgroups
     vds_ports = get_portgroups(content)
     vds_ports_org = '\n'.join([str(x) for x in vds_ports]) 
-    #vds_ports_json = json.dumps(vds_ports_org)
+ 
+    # Get the ansible survey based on the survey_id 
     ans_survey = get_ansible_survey(survey_id)
+    
+    # Execute the ansible survey update based on the prior queries
     update_ansible_survey(ans_survey, survey_id, vds_ports_org)
     return
 ```
