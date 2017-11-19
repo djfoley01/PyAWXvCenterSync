@@ -5,6 +5,7 @@ import json
 from pyVim.connect import Disconnect, SmartConnectNoSSL
 from pyVmomi import vim
 import atexit
+import psycopg2
 
 # Query Ansible AWX to obtain the survey_spec
 def get_ansible_survey(survey_id):
@@ -26,14 +27,45 @@ def get_ansible_survey(survey_id):
         return resp
 
 # Needs to be updated to execute postgres query using the updated survey
-def update_ansible_survey(survey, spec):
+def update_ansible_survey(survey, survey_id, spec):
     x = 0
     for value in survey["spec"]:
         #print value['variable']
         if value['variable'] == "client_type":
             survey['spec'][x]['choices'] = spec
         x = x + 1
-    print json.dumps(survey)
+    """ Connect to the PostgreSQL database server """
+    conn = None
+    try:
+ 
+        # connect to the PostgreSQL server
+        print('Connecting to the PostgreSQL database...')
+        conn = psycopg2.connect(host="ashawx01",database="awx", user="awx", password="awxpass")
+ 
+        # create a cursor
+        cur = conn.cursor()
+        # execute a statement
+        print('Update survey_spec:')
+        query = """UPDATE main_jobtemplate
+                   SET survey_spec = %s 
+                   WHERE unifiedjobtemplate_ptr_id = %s"""
+        json_survey = json.dumps(survey)
+        cur.execute(query, (json_survey, survey_id))
+ 
+        # display the PostgreSQL database server version
+        updated_rows = cur.rowcount
+        conn.commit()
+        print('Updated Rows:')
+        print(updated_rows)
+       
+        # close the communication with the PostgreSQL
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+            print('Database connection closed.')
             
 # Unused
 def GetVMHosts(content):
@@ -91,14 +123,15 @@ def get_obj(content, vimtype, name):
 
 # Main Function
 def main():
-    serviceInstance = SmartConnectNoSSL(host="ashvc01.ash.com",user="svcawx@ash.com",pwd="######",port=443)
+    serviceInstance = SmartConnectNoSSL(host="ashvc01.ash.com",user="svcawx@ash.com",pwd="Svc@wx1",port=443)
     atexit.register(Disconnect, serviceInstance)
     content = serviceInstance.RetrieveContent()
+    survey_id = "7"
     vds_ports = get_portgroups(content)
     vds_ports_org = '\n'.join([str(x) for x in vds_ports]) 
     #vds_ports_json = json.dumps(vds_ports_org)
-    ans_survey = get_ansible_survey("7")
-    update_ansible_survey(ans_survey, vds_ports_org)
+    ans_survey = get_ansible_survey(survey_id)
+    update_ansible_survey(ans_survey, survey_id, vds_ports_org)
     return
 #hosts = GetVMHosts(content)
 #hostSwitchesDict = GetHostsSwitches(hosts)
