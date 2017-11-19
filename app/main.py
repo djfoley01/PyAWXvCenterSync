@@ -8,15 +8,28 @@ import atexit
 import psycopg2
 import re
 
+### Variables
+db_host = "ashawx01"
+db_user = "awx"
+db_pass = "awxpass"
+database = "awx"
+
+# AWX Survey
+awx_url = "ashawx01.ash.com"
+survey_id = "7"
+
+# vCenter
+vc_dvswitch = "dvSwitch"
+
 # Query Ansible AWX to obtain the survey_spec
-def get_ansible_survey(survey_id):
+def get_ansible_survey():
     headers = { 'Authorization' : 'Basic %s' % base64.b64encode("admin:password") }
     response = cStringIO.StringIO()
     conn = pycurl.Curl()
     conn.setopt(pycurl.VERBOSE, 1)
     conn.setopt(pycurl.HTTPHEADER, ["%s: %s" % t for t in headers.items()])
 
-    conn.setopt(pycurl.URL, "http://ashawx01.ash.com/api/v2/job_templates/" + survey_id + "/survey_spec/")
+    conn.setopt(pycurl.URL, "http://" + awx_url + "/api/v2/job_templates/" + survey_id + "/survey_spec/")
     conn.setopt(pycurl.HTTPGET, -1)
     conn.setopt(pycurl.SSL_VERIFYPEER, False)
     conn.setopt(pycurl.SSL_VERIFYHOST, False)
@@ -28,7 +41,7 @@ def get_ansible_survey(survey_id):
         return resp
 
 # Needs to be updated to execute postgres query using the updated survey
-def update_ansible_survey(survey, survey_id, spec):
+def update_ansible_survey(survey, spec):
     x = 0
     for value in survey["spec"]:
         #print value['variable']
@@ -41,7 +54,7 @@ def update_ansible_survey(survey, survey_id, spec):
  
         # connect to the PostgreSQL server
         print('Connecting to the PostgreSQL database...')
-        conn = psycopg2.connect(host="ashawx01",database="awx", user="awx", password="awxpass")
+        conn = psycopg2.connect(host=db_host,database=database, user=db_user, password=db_pass)
  
         # create a cursor
         cur = conn.cursor()
@@ -98,7 +111,7 @@ def get_vds_object(dc):
 
 # Get the virtual portgroups from vcenter
 def get_portgroups(content):
-    trunk_dvswitch_name = "dvSwitch"
+    trunk_dvswitch_name = vc_dvswitch
     dvsportgroups = get_obj(content,
                                 [vim.dvs.DistributedVirtualPortgroup],
                                 trunk_dvswitch_name)
@@ -117,11 +130,11 @@ def get_obj(content, vimtype, name):
 
 # Main Function
 def main():
+    
     # Initiate Connection to vCenter
-    serviceInstance = SmartConnectNoSSL(host="ashvc01.ash.com",user="svcawx@ash.com",pwd="Svc@wx1",port=443)
+    serviceInstance = SmartConnectNoSSL(host="ashvc01.ash.com",user="svcawx@ash.com",pwd="Svc@wx1", port=443)
     atexit.register(Disconnect, serviceInstance)
     content = serviceInstance.RetrieveContent()
-    survey_id = "7"
     
     # Get a list of all the portgroups
     vds_ports = get_portgroups(content)
@@ -131,10 +144,10 @@ def main():
     vds_ports_org = '\n'.join([str(x) for x in filtered_ports]) 
  
     # Get the ansible survey based on the survey_id 
-    ans_survey = get_ansible_survey(survey_id)
+    ans_survey = get_ansible_survey()
     
     # Execute the ansible survey update based on the prior queries
-    update_ansible_survey(ans_survey, survey_id, vds_ports_org)
+    update_ansible_survey(ans_survey, vds_ports_org)
     return
 
 
