@@ -1,9 +1,8 @@
 # PyAWXvCenterSync
 
-Example code, currently missing postgres connection and query to update final survey_spec
+Example code
 
-The current output can be directly used to update the specific Ansible AWX postgres database.
-The only task now is to simply create a function to update the postgres database.
+The plugin is fully functional at this time. Only cleanup left is required.
 
 ### Setup
 
@@ -15,6 +14,7 @@ pip install -r requirements.txt
 Requirements (app/requirements.txt):
 * pycurl==7.43.0
 * requests==2.18.4
+* psycopg2==2.7.3.2
 * pyVim==0.0.21
 * pyVmomi==6.5.0.2017.5-1
 
