@@ -98,9 +98,6 @@ def get_vds_object(dc):
 # Get the virtual portgroups from vcenter
 def get_portgroups(content):
     trunk_dvswitch_name = "dvSwitch"
-    #dvswitch_obj = get_obj(content,
-    #                            [vim.DistributedVirtualSwitch],
-    #                            trunk_dvswitch_name)
     dvsportgroups = get_obj(content,
                                 [vim.dvs.DistributedVirtualPortgroup],
                                 trunk_dvswitch_name)
@@ -110,34 +107,31 @@ def get_portgroups(content):
 # Find and gather objects from vCenter, executed by get_portgroups
 def get_obj(content, vimtype, name):
     """Get the vsphere object associated with a given text name."""
-    #obj = None
     container = content.viewManager.CreateContainerView(content.rootFolder,
                                                               vimtype, True)
     lobject = list()
     for containername in container.view:
-        #temp = containername.name
         lobject.append(containername.name)
-        #if containername.name != name:
-        #   lobject.append(temp)
     return lobject
 
 # Main Function
 def main():
+    # Initiate Connection to vCenter
     serviceInstance = SmartConnectNoSSL(host="ashvc01.ash.com",user="svcawx@ash.com",pwd="Svc@wx1",port=443)
     atexit.register(Disconnect, serviceInstance)
     content = serviceInstance.RetrieveContent()
     survey_id = "7"
+    
+    # Get a list of all the portgroups
     vds_ports = get_portgroups(content)
     vds_ports_org = '\n'.join([str(x) for x in vds_ports]) 
-    #vds_ports_json = json.dumps(vds_ports_org)
+ 
+    # Get the ansible survey based on the survey_id 
     ans_survey = get_ansible_survey(survey_id)
+    
+    # Execute the ansible survey update based on the prior queries
     update_ansible_survey(ans_survey, survey_id, vds_ports_org)
     return
-#hosts = GetVMHosts(content)
-#hostSwitchesDict = GetHostsSwitches(hosts)
 
-#for host, vswithes in hostSwitchesDict.items():
-#  for v in vswithes:
-    #print(v.name)
 
 main()
