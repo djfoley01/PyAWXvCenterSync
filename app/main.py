@@ -80,34 +80,6 @@ def update_ansible_survey(survey, spec):
         if conn is not None:
             conn.close()
             print('Database connection closed.')
-            
-# Unused
-def GetVMHosts(content):
-    host_view = content.viewManager.CreateContainerView(content.rootFolder,
-                                                        [vim.HostSystem],
-                                                        True)
-    obj = [host for host in host_view.view]
-    host_view.Destroy()
-    return obj
-
-# Unused
-def GetHostsSwitches(hosts):
-    hostSwitchesDict = {}
-    for host in hosts:
-        switches = host.config.network.vswitch
-        hostSwitchesDict[host] = switches
-    return hostSwitchesDict
-
-# Unused
-def get_vds_object(dc):
-    """Return dvSwitch object with specified name."""
-    vds = list()
-    network_folder = dc.networkFolder
-    for net in network_folder.childEntity:
-        print net
-        if isinstance(net, vim.DistributedVirtualSwitch):
-            vds.append(net.name)
-    return vds
 
 # Get the virtual portgroups from vcenter
 def get_portgroups(content):
